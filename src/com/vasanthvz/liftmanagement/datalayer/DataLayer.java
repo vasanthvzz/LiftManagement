@@ -1,11 +1,13 @@
+package com.vasanthvz.liftmanagement.datalayer;
+
+import com.vasanthvz.liftmanagement.model.Lift;
+
 import java.util.*;
 
 public class DataLayer {
-
-
+    static int totalPath = 10;
     static int totalLift = 0;
     static Scanner sc = new Scanner(System.in);
-
     static ArrayList<Lift> liftList;
 
     static void createLift(){
@@ -13,17 +15,32 @@ public class DataLayer {
         totalLift = sc.nextInt();
         liftList = new ArrayList<>();
         for(int i=1;i<=totalLift;i++){
-            liftList.add(new Lift());
+            liftList.add(new Lift(i,getPath(i)));
         }
     }
 
-    static void displayLift(){
+    private static HashSet<Integer> getPath(int liftCounter) {
+        HashSet<Integer> path = new HashSet<>();
+        path.add(0);
+        for (int i = 1; i <= totalPath; i++) {
+            if ((liftCounter == 1 || liftCounter == 2) && i <= 5) {
+                path.add(i);
+            } else if ((liftCounter == 3 || liftCounter == 4) && i > 5) {
+                path.add(i);
+            } else if (liftCounter == 5) {
+                path.add(i);
+            }
+        }
+        return path;
+    }
+
+    public static void displayLift(){
         for(Lift lift : liftList){
             System.out.println(lift.name+" at position "+lift.position);
         }
     }
 
-    static List<Lift> getInstance(){
+    public static List<Lift> getInstance(){
         if(liftList == null){
             createLift();
         }
@@ -43,15 +60,15 @@ public class DataLayer {
     }
 
     public static List<Lift> getNearestLifts(int startingPoint) {
-        int smallDifference = Integer.MAX_VALUE;
+        int nearestDistance = Integer.MAX_VALUE;
         List<Lift> resultLift = new ArrayList<>();
         for(Lift lift : getWorkingLift()){
             int currentDistance = Math.abs(startingPoint-lift.position);
-            if(currentDistance < smallDifference){
+            if(currentDistance < nearestDistance){
                 resultLift.clear();
-                smallDifference = currentDistance;
+                nearestDistance = currentDistance;
                 resultLift.add(lift);
-            }else if(currentDistance == smallDifference){
+            }else if(currentDistance == nearestDistance){
                 resultLift.add(lift);
             }
         }
@@ -59,16 +76,16 @@ public class DataLayer {
     }
 
     public static List<Lift> getNearestLiftsWithRestriction(int startingPoint,int droppingPoint) {
-        int smallDifference = Integer.MAX_VALUE;
+        int nearestDistance = Integer.MAX_VALUE;
         List<Lift> resultLift = new ArrayList<>();
-        List<Lift>liftWithPath = getLiftWithPaths(startingPoint,droppingPoint);
+        List<Lift>liftWithPath = LiftInPath(startingPoint,droppingPoint);
         for (Lift lift : liftWithPath) {
             int currentDistance = Math.abs(startingPoint - lift.position);
-            if (currentDistance < smallDifference) {
+            if (currentDistance < nearestDistance) {
                 resultLift.clear();
-                smallDifference = currentDistance;
+                nearestDistance = currentDistance;
                 resultLift.add(lift);
-            } else if (currentDistance == smallDifference) {
+            } else if (currentDistance == nearestDistance) {
                 resultLift.add(lift);
             }
         }
@@ -85,7 +102,7 @@ public class DataLayer {
         return resultList;
     }
 
-    public static List<Lift> getLiftWithPaths(int startingPoint, int droppingPoint) {
+    public static List<Lift> LiftInPath(int startingPoint, int droppingPoint) {
         List<Lift> resultLift = new ArrayList<>();
         for (Lift lift : getWorkingLift()) {
             if (lift.path.contains(startingPoint) && lift.path.contains(droppingPoint)){
@@ -97,7 +114,7 @@ public class DataLayer {
 
     public static List<Lift> getLiftWithCapacity(int startingPoint,int droppingPoint,int capacity) {
         List<Lift> resultList = new ArrayList<>();
-        for(Lift lift : getLiftWithPaths(startingPoint,droppingPoint)){
+        for(Lift lift : LiftInPath(startingPoint,droppingPoint)){
             if(lift.capacity >= capacity){
                 resultList.add(lift);
             }

@@ -1,4 +1,5 @@
-import javax.xml.crypto.Data;
+package com.vasanthvz.liftmanagement.mainpage;
+
 import java.util.Scanner;
 
 public class MainPageView {
@@ -7,7 +8,7 @@ public class MainPageView {
 
     static Scanner sc= new Scanner(System.in);
 
-    MainPageView(){
+    public MainPageView(){
         mainPageModel = new MainPageModel(this);
     }
     public void init() {
@@ -15,7 +16,7 @@ public class MainPageView {
         mainPageModel.getInput();
     }
 
-    public  void showMenu(){
+    void showMenu(){//default access modifier
         System.out.println("Please Enter a choice below : ");
         System.out.println("""
                 1.Display Lifts\s
@@ -25,7 +26,7 @@ public class MainPageView {
                 5.Assign with restriction \s
                 6.Assign lift with least stops \s
                 7.Assign with capacity\s
-                9.Manual assign capacity \s
+                9.Manual assign capacity                       
                 0.Manual Assign""");
         mainPageModel.redirectChoice(sc.next());
     }
