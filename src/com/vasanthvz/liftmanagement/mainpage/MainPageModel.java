@@ -7,22 +7,23 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MainPageModel {
-    private static Scanner sc = new Scanner(System.in);
-    private MainPageView mainPageView;
+    private static final Scanner sc = new Scanner(System.in);
+    private final MainPageView mainPageView;
+    private DataLayer db;
 
     MainPageModel(MainPageView mainPageView) { //default access modifier
         this.mainPageView = mainPageView;
     }
 
     public void getInput() {
-        DataLayer.getInstance();
+        db = DataLayer.getInstance();
         mainPageView.showMenu();
     }
 
     public void redirectChoice(String choice) {
         switch (choice) {
             case "1": {
-                DataLayer.displayLift();
+                db.displayLift();
                 break;
             }
             case "2": {
@@ -72,7 +73,7 @@ public class MainPageModel {
         String name = sc.next();
         System.out.println("Enter the lift capacity :");
         int capacity = sc.nextInt();
-        for (Lift lift : DataLayer.getInstance()) {
+        for (Lift lift : db.getLiftList()) {
             if (lift.name.equals(name)) {
                 lift.capacity = capacity;
                 return;
@@ -87,7 +88,7 @@ public class MainPageModel {
         int droppingPoint = sc.nextInt();
         System.out.println("Enter the number of passengers : ");
         int capacity = sc.nextInt();
-        List<Lift> liftWithCapacity = DataLayer.getLiftWithCapacity(startingPoint, droppingPoint, capacity);
+        List<Lift> liftWithCapacity = db.getLiftWithCapacity(startingPoint, droppingPoint, capacity);
         if (liftWithCapacity.isEmpty()) {
             System.out.println("No lift found with this capacity");
         } else {
@@ -123,7 +124,7 @@ public class MainPageModel {
         int startingPoint = sc.nextInt();
         System.out.println("Enter the dropping point : ");
         int droppingPoint = sc.nextInt();
-        List<Lift> liftWithPath = DataLayer.LiftInPath(startingPoint,
+        List<Lift> liftWithPath = db.LiftInPath(startingPoint,
                 droppingPoint);
         int left = Math.min(startingPoint, droppingPoint);
         int right = Math.max(startingPoint, droppingPoint);
@@ -152,7 +153,7 @@ public class MainPageModel {
         int droppingPoint = sc.nextInt();
         Lift lift = null;
         boolean toRight = startingPoint < droppingPoint;
-        List<Lift> nearestLift = DataLayer.getNearestLifts(startingPoint);
+        List<Lift> nearestLift = db.getNearestLifts(startingPoint);
         if (nearestLift.size() == 1) {
             lift = nearestLift.getFirst();
         }
@@ -180,7 +181,7 @@ public class MainPageModel {
         int droppingPoint = sc.nextInt();
         Lift lift = null;
         boolean toRight = startingPoint < droppingPoint;
-        List<Lift> nearestLift = DataLayer.getNearestLiftsWithRestriction(startingPoint, droppingPoint);
+        List<Lift> nearestLift = db.getNearestLiftsWithRestriction(startingPoint, droppingPoint);
         if (nearestLift.size() == 1) {
             lift = nearestLift.getFirst();
         }
@@ -206,7 +207,7 @@ public class MainPageModel {
         String liftName = sc.next();
         System.out.println("Enter lift position :");
         int position = sc.nextInt();
-        for (Lift lift : DataLayer.getInstance()) {
+        for (Lift lift : db.getLiftList()) {
             if (lift.name.equals(liftName)) {
                 lift.position = position;
                 return;
@@ -220,7 +221,7 @@ public class MainPageModel {
         int startingPoint = sc.nextInt();
         System.out.println("Enter the dropping point : ");
         int droppingPoint = sc.nextInt();
-        List<Lift> nearestLift = DataLayer.getNearestLifts(startingPoint);
+        List<Lift> nearestLift = db.getNearestLifts(startingPoint);
         System.out.println(nearestLift.getFirst().name + " has been assigned");
         nearestLift.getFirst().position = droppingPoint;
     }
@@ -230,11 +231,11 @@ public class MainPageModel {
         int startingPoint = sc.nextInt();
         System.out.println("Enter the dropping point : ");
         int droppingPoint = sc.nextInt();
-        DataLayer.assignFirstPosition(droppingPoint);
+        db.assignFirstPosition(droppingPoint);
     }
 
     private void showPath() {
-        for (Lift lift1 : DataLayer.getInstance()) {
+        for (Lift lift1 : db.getLiftList()) {
             System.out.println(lift1.name + " : " + lift1.path);
         }
     }

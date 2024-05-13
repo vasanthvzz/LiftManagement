@@ -5,12 +5,20 @@ import com.vasanthvz.liftmanagement.model.Lift;
 import java.util.*;
 
 public class DataLayer {
-    static int totalPath = 10;
-    static int totalLift = 0;
-    static Scanner sc = new Scanner(System.in);
-    static ArrayList<Lift> liftList;
+    int totalPath = 10;
+    int totalLift = 0;
+    Scanner sc = new Scanner(System.in);
+    ArrayList<Lift> liftList;
+    static DataLayer db ;
 
-    static void createLift(){
+    public static DataLayer getInstance(){
+        if(db == null){
+            db = new DataLayer();
+        }
+        return db;
+    }
+
+    DataLayer(){
         System.out.println("enter the number of lifts : ");
         totalLift = sc.nextInt();
         liftList = new ArrayList<>();
@@ -19,7 +27,11 @@ public class DataLayer {
         }
     }
 
-    private static HashSet<Integer> getPath(int liftCounter) {
+    public List<Lift> getLiftList(){
+        return liftList;
+    }
+
+    private HashSet<Integer> getPath(int liftCounter) {
         HashSet<Integer> path = new HashSet<>();
         path.add(0);
         for (int i = 1; i <= totalPath; i++) {
@@ -34,20 +46,16 @@ public class DataLayer {
         return path;
     }
 
-    public static void displayLift(){
+    public void displayLift(){
         for(Lift lift : liftList){
             System.out.println(lift.name+" at position "+lift.position);
         }
     }
 
-    public static List<Lift> getInstance(){
-        if(liftList == null){
-            createLift();
-        }
-        return liftList;
-    }
 
-    public static void assignFirstPosition(int droppingPoint) {
+
+
+    public void assignFirstPosition(int droppingPoint) {
         for(Lift lift : getWorkingLift()){
             if(lift == null){
                 System.out.println("No lift present");
@@ -59,7 +67,7 @@ public class DataLayer {
         }
     }
 
-    public static List<Lift> getNearestLifts(int startingPoint) {
+    public List<Lift> getNearestLifts(int startingPoint) {
         int nearestDistance = Integer.MAX_VALUE;
         List<Lift> resultLift = new ArrayList<>();
         for(Lift lift : getWorkingLift()){
@@ -75,7 +83,7 @@ public class DataLayer {
         return resultLift;
     }
 
-    public static List<Lift> getNearestLiftsWithRestriction(int startingPoint,int droppingPoint) {
+    public List<Lift> getNearestLiftsWithRestriction(int startingPoint,int droppingPoint) {
         int nearestDistance = Integer.MAX_VALUE;
         List<Lift> resultLift = new ArrayList<>();
         List<Lift>liftWithPath = LiftInPath(startingPoint,droppingPoint);
@@ -92,7 +100,7 @@ public class DataLayer {
         return resultLift;
     }
 
-    public static List<Lift> getWorkingLift(){
+    public List<Lift> getWorkingLift(){
         List<Lift> resultList = new ArrayList<>();
         for (Lift lift : liftList){
             if(lift.position != -1){
@@ -102,7 +110,7 @@ public class DataLayer {
         return resultList;
     }
 
-    public static List<Lift> LiftInPath(int startingPoint, int droppingPoint) {
+    public List<Lift> LiftInPath(int startingPoint, int droppingPoint) {
         List<Lift> resultLift = new ArrayList<>();
         for (Lift lift : getWorkingLift()) {
             if (lift.path.contains(startingPoint) && lift.path.contains(droppingPoint)){
@@ -112,7 +120,7 @@ public class DataLayer {
         return resultLift;
     }
 
-    public static List<Lift> getLiftWithCapacity(int startingPoint,int droppingPoint,int capacity) {
+    public List<Lift> getLiftWithCapacity(int startingPoint,int droppingPoint,int capacity) {
         List<Lift> resultList = new ArrayList<>();
         for(Lift lift : LiftInPath(startingPoint,droppingPoint)){
             if(lift.capacity >= capacity){

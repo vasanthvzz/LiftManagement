@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class MainPageView {
 
     MainPageModel mainPageModel;
-
     static Scanner sc= new Scanner(System.in);
 
     public MainPageView(){
